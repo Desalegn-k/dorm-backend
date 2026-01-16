@@ -71,9 +71,7 @@ app.listen(PORT, "0.0.0.0", async () => {
     console.log(` Server running on port ${PORT}`);
   } catch (err) {
     console.error("❌ Database connection failed:", err);
-  } finally {
-    if (conn) conn.release(); // release it back to pool
-  }
+  }  
 });
 
 
