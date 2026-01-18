@@ -12,7 +12,7 @@ exports.registerStudent = async (req, res) => {
       gender,
       email,
       password,
-      
+
       college_id,
       department_id,
       year,
@@ -23,7 +23,6 @@ exports.registerStudent = async (req, res) => {
       !gender ||
       !email ||
       !password ||
-      
       !college_id ||
       !department_id ||
       !year ||
@@ -36,7 +35,7 @@ exports.registerStudent = async (req, res) => {
     // Check if email already exists in users table
     const [existing] = await pool.execute(
       "SELECT id FROM users WHERE email = ?",
-      [email]
+      [email],
     );
     if (existing.length > 0) {
       return res
@@ -62,7 +61,7 @@ exports.registerStudent = async (req, res) => {
     const [userResult] = await pool.execute(
       `INSERT INTO users (name, email, password_hash, role)
        VALUES (?, ?, ?, 'user')`,
-      [full_name, email, password_hash]
+      [full_name, email, password_hash],
     );
 
     const userId = userResult.insertId;
@@ -72,7 +71,16 @@ exports.registerStudent = async (req, res) => {
       `INSERT INTO students
        (id, full_name, gender,studentId, email,   college_id, department_id, year)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [userId, full_name, gender, studentId,email,   college_id, department_id, year]
+      [
+        userId,
+        full_name,
+        gender,
+        studentId,
+        email,
+        college_id,
+        department_id,
+        year,
+      ],
     );
 
     res.json({
@@ -81,8 +89,11 @@ exports.registerStudent = async (req, res) => {
       studentId: userId,
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Server error" });
+    console.error("REGISTER STUDENT ERROR:", err);
+    res.status(500).json({
+      success: false,
+      message: err.sqlMessage || err.message,
+    });
   }
 };
 
